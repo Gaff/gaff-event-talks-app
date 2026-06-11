@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tech Talks Event Schedule</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f4f4f4;
+            color: #333;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background-color: #fff;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            text-align: center;
+            color: #0056b3;
+            margin-bottom: 30px;
+        }
+
+        .search-container {
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        #categorySearch {
+            width: 80%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 16px;
+            max-width: 500px;
+        }
+
+        .talk-card {
+            background-color: #f9f9f9;
+            border: 1px solid #eee;
+            border-radius: 5px;
+            padding: 15px;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: flex-start;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+        }
+
+        .talk-card.break {
+            background-color: #e0f7fa;
+            border-color: #b2ebf2;
+            text-align: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .talk-time {
+            font-size: 1.1em;
+            font-weight: bold;
+            color: #007bff;
+            flex-shrink: 0;
+            width: 120px; /* Fixed width for time */
+            margin-right: 20px;
+        }
+
+        .talk-details {
+            flex-grow: 1;
+        }
+
+        .talk-title {
+            font-size: 1.3em;
+            color: #333;
+            margin-top: 0;
+            margin-bottom: 5px;
+        }
+
+        .talk-speakers {
+            font-style: italic;
+            color: #555;
+            margin-bottom: 5px;
+        }
+
+        .talk-category {
+            font-size: 0.9em;
+            color: #007bff;
+            margin-bottom: 10px;
+        }
+
+        .talk-description {
+            line-height: 1.5;
+            color: #666;
+        }
+
+        .no-talks {
+            text-align: center;
+            color: #777;
+            font-size: 1.2em;
+            padding: 30px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Tech Talks Event Schedule</h1>
+
+        <div class="search-container">
+            <input type="text" id="categorySearch" placeholder="Search by category (e.g., AI, Web Development)">
+        </div>
+
+        <div id="schedule">
+            <!-- Talks will be dynamically loaded here -->
+        </div>
+    </div>
+    <script>
+        const allTalksData = [
+            {
+                "id": "talk1",
+                "title": "The Future of Cloud Native Development",
+                "speakers": ["Dr. Alex Kim"],
+                "category": ["Cloud", "DevOps"],
+                "duration_minutes": 60,
+                "description": "Exploring the latest trends and best practices in building and deploying applications in cloud-native environments.",
+                "start_time": "10:00 AM",
+                "end_time": "11:00 AM"
+            },
+            {
+                "id": "talk2",
+                "title": "Mastering Modern JavaScript Frameworks",
+                "speakers": ["Sarah Lee"],
+                "category": ["Frontend", "JavaScript", "Web Development"],
+                "duration_minutes": 60,
+                "description": "A deep dive into popular JavaScript frameworks and how to choose the right one for your project.",
+                "start_time": "11:10 AM",
+                "end_time": "12:10 PM"
+            },
+            {
+                "id": "talk3",
+                "title": "Secure Coding Practices for Web Applications",
+                "speakers": ["John Smith", "Emily White"],
+                "category": ["Security", "Web Development"],
+                "duration_minutes": 60,
+                "description": "Essential security practices to protect your web applications from common vulnerabilities.",
+                "start_time": "12:20 PM",
+                "end_time": "01:20 PM"
+            },
+            {
+                "id": "lunch",
+                "title": "Lunch Break",
+                "speakers": [],
+                "category": ["Break"],
+                "duration_minutes": 60,
+                "description": "Enjoy a delicious lunch and network with fellow attendees.",
+                "start_time": "01:30 PM",
+                "end_time": "02:30 PM"
+            },
+            {
+                "id": "talk4",
+                "title": "Introduction to Machine Learning with Python",
+                "speakers": ["Dr. Maya Sharma"],
+                "category": ["AI", "Machine Learning", "Python"],
+                "duration_minutes": 60,
+                "description": "A beginner-friendly introduction to machine learning concepts and practical implementation with Python.",
+                "start_time": "02:40 PM",
+                "end_time": "03:40 AM"
+            },
+            {
+                "id": "talk5",
+                "title": "Building Scalable Microservices with Node.js",
+                "speakers": ["David Chen"],
+                "category": ["Backend", "Node.js", "Microservices"],
+                "duration_minutes": 60,
+                "description": "Learn how to design and build scalable and resilient microservices using Node.js.",
+                "start_time": "03:50 PM",
+                "end_time": "04:50 PM"
+            },
+            {
+                "id": "talk6",
+                "title": "Effective Data Visualization Techniques",
+                "speakers": ["Anna Petrova"],
+                "category": ["Data Science", "Visualization"],
+                "duration_minutes": 60,
+                "description": "Best practices and tools for creating impactful data visualizations to communicate insights effectively.",
+                "start_time": "05:00 PM",
+                "end_time": "06:00 PM"
+            }
+        ];
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const scheduleDiv = document.getElementById('schedule');
+            const categorySearchInput = document.getElementById('categorySearch');
+            let allTalks = allTalksData; // Use embedded data directly
+
+            // Function to display the schedule
+            function displaySchedule(talksToDisplay) {
+                scheduleDiv.innerHTML = ''; // Clear previous content
+
+                if (talksToDisplay.length === 0) {
+                    scheduleDiv.innerHTML = '<p class="no-talks">No talks found matching your criteria.</p>';
+                    return;
+                }
+
+                talksToDisplay.forEach(talk => {
+                    const talkCard = document.createElement('div');
+                    talkCard.classList.add('talk-card');
+                    if (talk.id === 'lunch') {
+                        talkCard.classList.add('break');
+                    }
+
+                    let speakersHtml = talk.speakers.length > 0 ? `<p class="talk-speakers">Speaker(s): ${talk.speakers.join(', ')}</p>` : '';
+                    let categoryHtml = talk.category.length > 0 ? `<p class="talk-category">Category: ${talk.category.join(', ')}</p>` : '';
+
+                    talkCard.innerHTML = `
+                        <div class="talk-time">${talk.start_time} - ${talk.end_time}</div>
+                        <div class="talk-details">
+                            <h2 class="talk-title">${talk.title}</h2>
+                            ${speakersHtml}
+                            ${categoryHtml}
+                            <p class="talk-description">${talk.description}</p>
+                        </div>
+                    `;
+                    scheduleDiv.appendChild(talkCard);
+                });
+            }
+
+            // Function to filter talks based on search input
+            function filterTalks() {
+                const searchTerm = categorySearchInput.value.toLowerCase().trim();
+
+                if (!searchTerm) {
+                    displaySchedule(allTalks); // Show all talks if search term is empty
+                    return;
+                }
+
+                const filteredTalks = allTalks.filter(talk => {
+                    // Check if any category matches the search term
+                    return talk.category.some(cat => cat.toLowerCase().includes(searchTerm));
+                });
+
+                displaySchedule(filteredTalks);
+            }
+
+            // Event listener for search input
+            categorySearchInput.addEventListener('keyup', filterTalks);
+
+            // Initial display (no fetch needed)
+            displaySchedule(allTalks);
+        });
+    </script>
+</body>
+</html>
